@@ -75,11 +75,11 @@ You will then need to use [bind mounts](https://docs.docker.com/storage/bind-mou
 to access the inventory and SSH key in the container, like this:
 
 ```ShellSession
-git checkout v2.25.0
-docker pull quay.io/kubespray/kubespray:v2.25.0
+git checkout v2.26.0
+docker pull quay.io/kubespray/kubespray:v2.26.0
 docker run --rm -it --mount type=bind,source="$(pwd)"/inventory/sample,dst=/inventory \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
-  quay.io/kubespray/kubespray:v2.25.0 bash
+  quay.io/kubespray/kubespray:v2.26.0 bash
 # Inside the container you may now run the kubespray playbooks:
 ansible-playbook -i /inventory/inventory.ini --private-key /root/.ssh/id_rsa cluster.yml
 ```
@@ -143,11 +143,11 @@ vagrant up
 - **Flatcar Container Linux by Kinvolk**
 - **Debian** Bookworm, Bullseye
 - **Ubuntu** 20.04, 22.04, 24.04
-- **CentOS/RHEL** 7, [8, 9](docs/operating_systems/centos.md#centos-8)
+- **CentOS/RHEL** [8, 9](docs/operating_systems/centos.md#centos-8)
 - **Fedora** 37, 38
 - **Fedora CoreOS** (see [fcos Note](docs/operating_systems/fcos.md))
 - **openSUSE** Leap 15.x/Tumbleweed
-- **Oracle Linux** 7, [8, 9](docs/operating_systems/centos.md#centos-8)
+- **Oracle Linux** [8, 9](docs/operating_systems/centos.md#centos-8)
 - **Alma Linux** [8, 9](docs/operating_systems/centos.md#centos-8)
 - **Rocky Linux** [8, 9](docs/operating_systems/centos.md#centos-8)
 - **Kylin Linux Advanced Server V10** (experimental: see [kylin linux notes](docs/operating_systems/kylinlinux.md))

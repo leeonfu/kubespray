@@ -9,7 +9,7 @@
   delay: 5
   until: _result.status == 200
 
-- name: Kubeadm | Upgrade first master
+- name: Kubeadm | Upgrade first control plane node
   command: >-
     timeout -k 600s 600s
     {{ bin_dir }}/kubeadm
@@ -18,7 +18,7 @@
     --ignore-preflight-errors=all
     --allow-experimental-upgrades
     --etcd-upgrade={{ (etcd_deployment_type == "kubeadm") | bool | lower }}
-    {% if kubeadm_patches is defined and kubeadm_patches.enabled %}--patches={{ kubeadm_patches.dest_dir }}{% endif %}
+    {% if kubeadm_patches | length > 0 %}--patches={{ kubeadm_patches_dir }}{% endif %}
     --force
   register: kubeadm_upgrade
   # Retry is because upload config sometimes fails
@@ -28,9 +28,9 @@
   failed_when: kubeadm_upgrade.rc != 0 and "field is immutable" not in kubeadm_upgrade.stderr
   environment:
     PATH: "{{ bin_dir }}:{{ ansible_env.PATH }}"
-  notify: Master | restart kubelet
+  notify: Control plane | restart kubelet
 
-- name: Kubeadm | Upgrade other masters
+- name: Kubeadm | Upgrade other control plane nodes
   command: >-
     timeout -k 600s 600s
     {{ bin_dir }}/kubeadm
@@ -39,7 +39,7 @@
     --ignore-preflight-errors=all
     --allow-experimental-upgrades
     --etcd-upgrade={{ (etcd_deployment_type == "kubeadm") | bool | lower }}
-    {% if kubeadm_patches is defined and kubeadm_patches.enabled %}--patches={{ kubeadm_patches.dest_dir }}{% endif %}
+    {% if kubeadm_patches | length > 0 %}--patches={{ kubeadm_patches_dir }}{% endif %}
     --force
   register: kubeadm_upgrade
   # Retry is because upload config sometimes fails
@@ -49,7 +49,7 @@
   failed_when: kubeadm_upgrade.rc != 0 and "field is immutable" not in kubeadm_upgrade.stderr
   environment:
     PATH: "{{ bin_dir }}:{{ ansible_env.PATH }}"
-  notify: Master | restart kubelet
+  notify: Control plane | restart kubelet
 
 - name: Kubeadm | Remove binding to anonymous user
   command: "{{ kubectl }} -n kube-public delete rolebinding kubeadm:bootstrap-signer-clusterinfo --ignore-not-found"
